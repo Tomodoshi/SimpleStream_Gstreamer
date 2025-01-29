@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Streaming Control</title>
+    <style>
+        button {
+            padding: 10px 20px;
+            margin: 10px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        #status {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>LIVE STREAMING</h1>
+
+    <div>
+        <img id="stream" src="{{ url_for('video') }}" width="50%" alt="Stream Unavailable"/>
+    </div>
+
+    <div>
+        <button onclick="startStream()">Start Stream</button>
+        <button onclick="stopStream()">Stop Stream</button>
+        <button onclick="checkStatus()">Check Status</button>
+    </div>
+
+    <div id="status">Stream Status: Unknown</div>
+
+    <script>
+        function startStream() {
+            fetch('/start_stream', { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('status').innerText = `Stream Status: ${data.status}`;
+                    if (data.refresh) {
+                        location.reload();
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        function stopStream() {
+            fetch('/stop_stream', { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('status').innerText = `Stream Status: ${data.status}`;
+                    if (data.refresh) {
+                        location.reload();
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        function checkStatus() {
+            fetch('/check_status', { method: 'GET' })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('status').innerText = `Stream Status: ${data.status}`;
+                })
+                .catch(error => console.error('Error:', error));
+        }
+    </script>
+</body>
+</html>
+
+<!--added some constraints to the buttons? idk why they aint working
+
+
+const startBtn = document.getElementById('startBtn');
+const stopBtn = document.getElementById('stopBtn');
+
+use the live server to run the code and see if it works
+
+function updateButtonStates(status) {
+    if (status === 'running') {
+        startBtn.disabled = true;   
+        stopBtn.disabled = false;   
+    } else {
+        startBtn.disabled = false;  
+        stopBtn.disabled = true; 
+    }
+}-->
